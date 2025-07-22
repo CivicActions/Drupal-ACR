@@ -1,134 +1,288 @@
-# Drupal-ACR - WCAG Issues Extraction Tool
+# Drupal Accessibility Conformance Report (ACR) Generator
 
-A Node.js tool for extracting and analyzing WCAG (Web Content Accessibility Guidelines) related issues from Drupal.org. This tool provides comprehensive data collection for accessibility issue tracking and development management.
+A comprehensive toolkit for generating OpenACR-compliant accessibility conformance reports from Drupal.org issues. This automated workflow extracts WCAG-related issues, analyzes them with AI, consolidates findings by WCAG Success Criteria, and produces government-compliant accessibility reports.
 
-## Phase 1 Complete ✅
-
-Phase 1 has been successfully completed with a fully functional automated extraction system that bypasses bot detection and provides comprehensive metadata for all WCAG-tagged issues.
-
-## Files Overview
-
-### Core Scripts
-
-- **`extract-wcag-issues.js`** - Main extraction script with enhanced metadata collection
-  - Extracts issues for all 80 WCAG 2.2 Success Criteria (Level A, AA, AAA)
-  - Uses tool-based User-Agents (curl/wget) to bypass bot detection
-  - Collects comprehensive metadata: Status, Priority, Component, Version, Reporter, Dates, Comments, Forks
-  - Generates timestamped CSV files in `results/` directory
-  - Implements progressive retry strategy for reliability
-
-- **`scan-wcag.js`** - Alternative scanning approach with different extraction patterns
-- **`generate-wcag-urls.js`** - Template generator for manual URL creation
-
-### Results Directory
-
-The `results/` directory contains all generated CSV files with timestamped filenames:
-
-- **Latest Complete Dataset**: `wcag-detailed-issues_2025-07-18_18-39.csv`
-  - Contains all discovered WCAG issues with full metadata
-  - 16 columns of comprehensive data per issue
-  - Sorted by WCAG SC and project
-
-## CSV Data Structure
-
-Each generated CSV contains the following columns:
-
-| Column | Description |
-|--------|-------------|
-| WCAG SC | WCAG Success Criteria code (e.g., wcag111, wcag143) |
-| Issue ID | Drupal.org issue number |
-| Issue Title | Full issue title |
-| Issue URL | Direct link to the issue |
-| Project | Drupal project name (drupal, contrib modules, etc.) |
-| Status | Current issue status (Active, Postponed, Fixed, etc.) |
-| Priority | Issue priority (Major, Normal, Minor, Critical) |
-| Component | Drupal component/system affected |
-| Version | Target Drupal version |
-| Reporter | Username of issue reporter |
-| Created | Issue creation date (YYYY-MM-DD) |
-| Updated | Last update date (YYYY-MM-DD) |
-| Comments | Number of comments on the issue |
-| Has Fork | Whether issue has a fork/merge request |
-| Last Commenter | Username of most recent commenter |
-| Extracted At | Timestamp of data extraction |
-
-## Usage
-
-### Run Full Extraction
+## 🎯 Quick Start
 
 ```bash
-node extract-wcag-issues.js
+# 1. Clone and setup
+git clone <repository-url>
+cd drupal-acr
+npm install
+
+# 2. Set up API key for AI analysis
+cp .env.example .env
+# Edit .env and add: GEMINI_API_KEY=your-api-key-here
+
+# 3. Run complete workflow
+node run-acr-workflow.js
+
+# 4. Validate output
+npx openacr validate -f results/drupal-openacr_*.yaml
 ```
 
-This will:
-1. Process all 80 WCAG 2.2 Success Criteria
-2. Extract individual issue details with enhanced metadata
-3. Generate a timestamped CSV file in `results/`
-4. Provide progress updates and statistics
+Get your Gemini API key from: https://aistudio.google.com/app/apikey
 
-### Expected Runtime
+## 🔄 Four-Step Workflow
 
-- **Total WCAG Criteria**: 80
-- **Estimated Time**: 15-30 minutes (depending on issues found and network conditions)
-- **Rate Limiting**: Built-in delays to avoid bot detection
-- **Bot Detection**: Automatically handled with progressive retry strategy
+### Step 1: Extract WCAG Issues
+**File:** `extract-wcag-issues.js`
+- Extracts all WCAG-tagged issues from Drupal.org
+- Processes 80+ WCAG 2.1/2.2 Success Criteria
+- Collects comprehensive metadata (status, priority, comments, etc.)
+- Bypasses bot detection with intelligent retry strategies
+- **Output:** `results/wcag-detailed-issues_YYYY-MM-DD_HH-MM.csv`
 
-## Technical Features
+### Step 2: Generate AI Summaries  
+**File:** `generate-issue-summaries.js`
+- Uses Google Gemini AI to analyze each issue
+- Generates professional ACR (Accessibility Conformance Report) notes
+- Creates technical developer guidance for issue resolution
+- Assesses title accuracy and suggests improvements
+- **Output:** `results/wcag-issue-summaries_YYYY-MM-DD_HH-MM.csv`
 
-### Bot Detection Bypass
-- Tool-based User-Agents (curl, wget) instead of browser fingerprints
-- Simplified headers that don't trigger security measures
-- Progressive retry strategy with exponential backoff
-- Session warming and cookie management
+### Step 3: Consolidate by WCAG Success Criteria
+**File:** `consolidate-wcag-summaries.js`
+- Groups individual issues by WCAG Success Criteria
+- Creates master assessments with AI-powered consolidation
+- Determines compliance levels (SUPPORTED, PARTIALLY_SUPPORTED, NOT_SUPPORTED)
+- Provides real-time console output of assessments
+- **Output:** `results/wcag-acr-consolidated_YYYY-MM-DD_HH-MM.csv`
 
-### Enhanced Metadata Extraction
-- Individual issue page scraping for detailed metadata
-- Accurate comment counting (fixed from previous issues)
-- Fork detection for development tracking
-- Last commenter identification for follow-up management
+### Step 4: Convert to OpenACR Format
+**File:** `convert-to-openacr.js`
+- Converts consolidated data to government-compliant OpenACR YAML
+- Applies positive accessibility statements for well-supported criteria
+- Handles WCAG 2.2 compatibility (with future-proofing)
+- Uses customizable templates for organization-specific branding
+- **Output:** `results/drupal-openacr_YYYY-MM-DD_HH-MM.yaml`
 
-### Error Handling & Reliability
-- Multiple fallback strategies (HTML parsing → RSS feeds → progressive retry)
-- Comprehensive error logging and recovery
-- Automatic retry with extended delays for blocked requests
-- Session management and fingerprint rotation
+## 🚀 Master Workflow Script
 
-## Data Quality
+The `run-acr-workflow.js` script orchestrates all four steps:
 
-### Recent Improvements
-- ✅ Fixed comment counting accuracy (was showing inflated numbers)
-- ✅ Improved fork detection (was showing false positives)
-- ✅ Added Status, Priority, Component, Version fields
-- ✅ Enhanced last commenter extraction
-- ✅ Accurate CSV escaping and formatting
+```bash
+# Run complete workflow
+node run-acr-workflow.js
 
-### Validation
-- Comment counts verified against actual issue pages
-- Fork detection tested against known forked/non-forked issues
-- All metadata fields validated with real Drupal.org data
+# Run specific step only
+node run-acr-workflow.js --step 2
 
-## Results Summary
+# Run from step 3 to end
+node run-acr-workflow.js --from 3
 
-From the latest complete run (`wcag-detailed-issues_2025-07-18_18-39.csv`):
+# Skip step 1 (use existing data)
+node run-acr-workflow.js --skip 1
 
-- **Total Issues Extracted**: ~300+ WCAG-tagged issues
-- **WCAG Criteria Covered**: ~44 of 80 criteria have associated issues
-- **Projects Included**: Drupal core, contrib modules, themes
-- **Data Completeness**: Full metadata for all discovered issues
+# Dry run (show execution plan)
+node run-acr-workflow.js --dry-run
 
-## Next Steps
+# Verbose output
+node run-acr-workflow.js --verbose
 
-Phase 1 is complete with a robust, automated extraction system. Potential Phase 2 enhancements could include:
+# Help
+node run-acr-workflow.js --help
+```
+## 📊 Data Flow
 
-- Real-time monitoring and alerts for new WCAG issues
-- Integration with project management tools
-- Automated trend analysis and reporting
-- Advanced filtering and querying capabilities
+```
+Drupal.org Issues → Extract → AI Analysis → Consolidate → OpenACR YAML
+     🌐              📥        🤖           📋           📄
+```
 
-## Technical Notes
+1. **Raw Issues** (300+ individual accessibility issues)
+2. **Detailed CSV** (comprehensive metadata per issue)  
+3. **AI Summaries** (professional ACR notes + dev guidance)
+4. **Consolidated ACR** (assessments by WCAG Success Criteria)
+5. **OpenACR YAML** (government-compliant accessibility report)
 
-- **Node.js Version**: Tested with Node.js 18+ (uses built-in fetch)
-- **Dependencies**: Only built-in Node.js modules (fs, path)
-- **Rate Limiting**: 5-15 second delays between requests
-- **File Organization**: Timestamped outputs in `results/` directory
-- **Logging**: Comprehensive progress and error logging
+## 📁 File Structure
+
+```
+drupal-acr/
+├── extract-wcag-issues.js        # Step 1: Extract from Drupal.org
+├── generate-issue-summaries.js   # Step 2: AI-powered analysis
+├── consolidate-wcag-summaries.js # Step 3: Consolidate by WCAG SC
+├── convert-to-openacr.js         # Step 4: Generate OpenACR YAML
+├── run-acr-workflow.js           # Master workflow orchestrator
+├── drupal-template.yaml          # Customizable OpenACR template
+├── .env.example                  # Environment variables template
+├── package.json                  # Dependencies and scripts
+├── README.md                     # This file
+└── results/                      # Generated CSV and YAML files
+    ├── wcag-detailed-issues_*.csv
+    ├── wcag-issue-summaries_*.csv
+    ├── wcag-acr-consolidated_*.csv
+    └── drupal-openacr_*.yaml
+```
+
+## ⚙️ Configuration
+
+### Environment Variables
+Create a `.env` file with:
+```bash
+GEMINI_API_KEY=your-actual-api-key-here
+```
+
+### Template Customization
+Edit `drupal-template.yaml` to customize:
+- Product information
+- Author/organization details  
+- Report descriptions
+- Contact information
+
+### N/A Criteria List
+Modify the `naList` array in `convert-to-openacr.js` to specify WCAG criteria that should be marked as "Not Applicable":
+```javascript
+const naList = ['1.2.4', '1.2.5', '2.1.4', '2.2.1', '2.2.2', '2.3.1', '2.5.4', '3.3.8', '4.1.1'];
+```
+
+## 📋 CSV Data Structure
+
+### Step 1 Output: Detailed Issues
+| Column | Description |
+|--------|-------------|
+| WCAG SC | WCAG Success Criteria (e.g., wcag111, wcag143) |
+| Issue ID | Drupal.org issue number |
+| Issue Title | Full issue title |
+| Issue URL | Direct link to issue |
+| Project | Drupal project name |
+| Status | Current status (Active, Fixed, etc.) |
+| Priority | Issue priority (Critical, Major, etc.) |
+| Component | Affected Drupal component |
+| Version | Target Drupal version |
+| Reporter | Issue reporter username |
+| Created | Creation date |
+| Updated | Last update date |
+| Comments | Number of comments |
+| Has Fork | Fork/MR availability |
+| Last Commenter | Most recent commenter |
+| Extracted At | Data extraction timestamp |
+
+### Step 2 Output: AI Summaries
+| Column | Description |
+|--------|-------------|
+| Issue ID | Drupal.org issue identifier |
+| ACR Note | Professional accessibility barrier description |
+| Developer Note | Technical guidance for resolution |
+| Title Assessment | Title accuracy evaluation |
+| Processed At | AI analysis timestamp |
+
+### Step 3 Output: Consolidated ACR
+| Column | Description |
+|--------|-------------|
+| WCAG SC | WCAG Success Criteria |
+| ACR Assessment | Compliance level (SUPPORTED/PARTIALLY_SUPPORTED/NOT_SUPPORTED) |
+| ACR Summary | Consolidated assessment for the criteria |
+| Issue Count | Number of related issues |
+| Issue IDs | Comma-separated list of issue IDs |
+| Processed At | Consolidation timestamp |
+
+## 🤖 AI-Powered Features
+
+### ACR Notes Include:
+- Professional compliance language for accessibility reports
+- Clear barrier descriptions with user impact analysis
+- Section 508 disability impact mapping (vision, hearing, motor, cognitive)
+- Browser-specific limitations and compatibility notes
+- WCAG Success Criteria references
+
+### Developer Notes Include:
+- Patch/merge request analysis from issue comments
+- Technical next steps and recommended actions
+- Differentiation between current and outdated solutions
+- Browser-specific issues and API change considerations
+- Blocker identification and review status
+
+### Positive Accessibility Statements:
+- 85+ pre-written positive descriptions for WCAG criteria
+- Automatically applied to well-supported features
+- Highlights accessibility achievements alongside problems
+- Provides balanced view in compliance reports
+
+## 🎯 Expected Performance
+
+| Step | Runtime | API Cost | Output Size |
+|------|---------|----------|-------------|
+| 1. Extract | 15-30 min | Free | ~300 issues |
+| 2. AI Analysis | 20-30 min | $3-15 | ACR summaries |
+| 3. Consolidate | 2-5 min | $2-8 | 45 criteria |
+| 4. Convert | <1 min | Free | OpenACR YAML |
+
+**Total:** ~45-60 minutes, $5-25 in API costs
+
+## ✅ Quality Features
+
+### Reliability:
+- Progressive retry strategies with exponential backoff
+- Bot detection bypass with tool-based user agents
+- Comprehensive error handling and recovery
+- Session management and rate limiting
+
+### Validation:
+- OpenACR CLI validation integration
+- Government schema compliance
+- WCAG 2.2 future-proofing with clear TODO markers
+- Comprehensive data validation and error checking
+
+### User Experience:
+- Real-time progress reporting with colored console output
+- Helpful error messages and troubleshooting guidance
+- Flexible command-line options for different use cases
+- Automatic file management with timestamped outputs
+
+## 🏛️ Government Compliance
+
+The generated OpenACR YAML files are fully compliant with:
+- **Section 508** accessibility requirements
+- **WCAG 2.1 Level A/AA** standards  
+- **GSA OpenACR** schema specifications
+- **Federal accessibility** reporting guidelines
+
+Validated with: `npx openacr validate -f results/drupal-openacr_*.yaml`
+
+## 🔧 Troubleshooting
+
+### Common Issues:
+
+**Missing API Key:**
+```bash
+# Set environment variable
+export GEMINI_API_KEY="your-key-here"
+
+# Or create .env file
+echo "GEMINI_API_KEY=your-key-here" > .env
+```
+
+**Rate Limiting:**
+- Built-in delays respect API quotas
+- Automatic retry with exponential backoff
+- Progress is saved between runs
+
+**No Input Data:**
+- Run steps in order (1→2→3→4)
+- Use `--from` flag to resume from specific step
+- Check `results/` directory for existing files
+
+**OpenACR Validation Errors:**
+- Ensure complete workflow execution
+- Check WCAG 2.2 criteria handling
+- Validate template customizations
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Test with sample data
+4. Submit pull request with clear description
+
+## 📄 License
+
+[License information here]
+
+## 🆘 Support
+
+- **Issues:** Create GitHub issue with error details
+- **API Key:** https://aistudio.google.com/app/apikey
+- **OpenACR:** https://acreditor.section508.gov/
+- **WCAG Guidelines:** https://www.w3.org/WAI/WCAG21/quickref/
