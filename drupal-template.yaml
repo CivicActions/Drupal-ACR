@@ -1,0 +1,52 @@
+title: Drupal Accessibility Conformance Report
+product:
+  name: Drupal
+  version: "10"
+  description: >-
+    Drupal is an open source content management platform supporting a variety of
+    websites ranging from personal weblogs to large community-driven websites.
+author:
+  name: "Your Name"
+  company_name: "Your Organization"
+  address: "Your Address"
+  email: "your.email@example.com"
+  phone: "(000) 000-0000"
+  website: "https://yourorganization.com"
+report_date: "${timestamp}"
+last_modified_date: "${timestamp}"
+version: 1
+notes: >-
+  This accessibility conformance report has been generated from automated 
+  analysis of Drupal accessibility issues. The assessments are based on 
+  WCAG 2.1 Level A and AA criteria. Manual verification is recommended 
+  for critical assessments. Links to the issues identified are included where 
+  possible to ensure that this is a living document where outstanding issues 
+  are regularly reviewed for compliance.
+evaluation_methods_used: >-
+  Automated analysis using AI-powered assessment of accessibility issues, 
+  combined with manual review of WCAG conformance. Issues were extracted 
+  from accessibility audits and consolidated by WCAG Success Criteria. 
+  Analysis includes review of identified accessibility barriers and user impact.
+legal_disclaimer: >-
+  The information herein is provided in good faith based on analysis of 
+  identified accessibility issues and does not represent a legally-binding 
+  claim. Please verify assessments and contact us to report any accessibility 
+  errors or conformance claim errors for re-evaluation and correction, if necessary.
+repository: "https://github.com/your-org/your-repo"
+feedback: "mailto:your.email@example.com"
+license: GPL-2.0-or-later
+related_openacrs:
+  - url: ""
+    type: secondary
+chapters:
+  success_criteria_level_a:
+    notes: >-
+      Drupal doesn't make a strong distinction between the front-end and
+      back-end accessibility. Many administration interfaces can be exposed to
+      users in a more interactive site. Generally this report focuses the
+      Conformance Level / Remarks and Explanations so that Web comments are
+      about elements that are typically public for all users, while Authoring
+      Tool is typically for authors and administrators. The goal of the
+      authoring interface is to support ATAG 2.0 AA (Part A and B). The Drupal
+      community strives to keep up with the latest WCAG recommendation.
+    criteria:

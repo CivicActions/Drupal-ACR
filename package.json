@@ -1,0 +1,36 @@
+{
+  "name": "drupal-acr-generator",
+  "version": "2.0.0",
+  "description": "Generate OpenACR-compliant accessibility conformance reports from Drupal.org issues using AI-powered analysis and WCAG Success Criteria consolidation.",
+  "main": "run-acr-workflow.js",
+  "type": "module",
+  "scripts": {
+    "acr": "node run-acr-workflow.js",
+    "step1": "node extract-wcag-issues.js",
+    "step2": "node generate-issue-summaries.js", 
+    "step3": "node consolidate-wcag-summaries.js",
+    "step4": "node convert-to-openacr.js",
+    "validate": "npx openacr validate -f results/drupal-openacr_*.yaml",
+    "help": "node run-acr-workflow.js --help"
+  },
+  "keywords": [
+    "accessibility", 
+    "wcag", 
+    "openacr", 
+    "drupal", 
+    "section508", 
+    "compliance",
+    "ai-analysis",
+    "government-reports"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@civicactions/openacr": "^0.3.11",
+    "csv-parser": "^3.2.0",
+    "object-hash": "^3.0.0"
+  }
+}
