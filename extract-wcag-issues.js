@@ -1,6 +1,6 @@
 // Extract individual WCAG issues from Drupal.org search pages
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
